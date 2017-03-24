@@ -9,7 +9,7 @@
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 //
 
-Script.include("file:///home/delamare/gitclones/hifi/unpublishedScripts/interaction/NPCHelpers.js", function(){print("NPCHelpers included.");main();});
+Script.include("https://raw.githubusercontent.com/Delamare2112/hifi/Interaction/unpublishedScripts/interaction/NPCHelpers.js", function(){print("NPCHelpers included.");main();});
 
 var walkForwardAnim = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/walk_fwd.fbx";
 var idleAnim = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/idle.fbx";
