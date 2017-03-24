@@ -3,7 +3,6 @@
 #include <src/InterfaceLogging.h>
 #include <src/ui/AvatarInputs.h>
 #include "LimitlessConnection.h"
-#include "LimitlessVoiceRecognitionScriptingInterface.h
 #include "LimitlessVoiceRecognitionScriptingInterface.h"
 
 LimitlessConnection::LimitlessConnection() :
