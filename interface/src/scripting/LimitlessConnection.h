@@ -1,0 +1,44 @@
+//
+//  SpeechRecognitionScriptingInterface.h
+//  interface/src/scripting
+//
+//  Created by Trevor Berninger on 3/24/17.
+//  Copyright 2017 Limitless ltd.
+//
+//  Distributed under the Apache License, Version 2.0.
+//  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
+//
+
+#ifndef hifi_LimitlessConnection_h
+#define hifi_LimitlessConnection_h
+
+#include <AudioClient.h>
+#include <QObject>
+#include <QFuture>
+
+class LimitlessConnection : public QObject {
+    Q_OBJECT
+public:
+    LimitlessConnection();
+
+    void startListening();
+    void stopListening();
+
+signals:
+    void onReceivedTranscription(QString speech);
+    void onFinishedSpeaking(QString speech);
+
+private:
+    void transcriptionReceived();
+    void audioInputReceived(const QByteArray& inputSamples);
+    void listenLoop();
+
+    std::unique_ptr<QTcpSocket> _transcribeServerSocket;
+    std::atomic<bool> _streamingAudioForTranscription;
+    bool _authenticated;
+    QByteArray _serverDataBuffer;
+    QString _currentTranscription;
+    QQueue<QByteArray> _audioDataBuffer;
+};
+
+#endif //hifi_LimitlessConnection_h
