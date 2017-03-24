@@ -20,8 +20,8 @@ LimitlessVoiceRecognitionScriptingInterface::LimitlessVoiceRecognitionScriptingI
         _shouldStartListeningForVoice(false)
 {
     connect(&_voiceTimer, &QTimer::timeout, this, &LimitlessVoiceRecognitionScriptingInterface::voiceTimeout);
-    connect(&connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onFinishedSpeaking(transcription)});
-    connect(&connection, &LimitlessConnection::onFinishedSpeaking, this, [this](QString transcription){emit onFinishedSpeaking(transcription)});
+    connect(&connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onFinishedSpeaking(transcription);});
+    connect(&connection, &LimitlessConnection::onFinishedSpeaking, this, [this](QString transcription){emit onFinishedSpeaking(transcription);});
 }
 
 void LimitlessVoiceRecognitionScriptingInterface::update() {
