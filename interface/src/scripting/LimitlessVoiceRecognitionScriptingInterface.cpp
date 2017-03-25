@@ -14,7 +14,6 @@
 #include <QJsonArray>
 #include <src/ui/AvatarInputs.h>
 #include <QtConcurrent/QtConcurrentRun>
-#include <QMetaObject>
 #include "LimitlessVoiceRecognitionScriptingInterface.h"
 
 LimitlessVoiceRecognitionScriptingInterface::LimitlessVoiceRecognitionScriptingInterface() :
@@ -41,7 +40,7 @@ void LimitlessVoiceRecognitionScriptingInterface::update() {
             }
         } else if (audioLevel > 0.33f) {
             qCDebug(interfaceapp) << "Starting to listen";
-            QMetaObject::invokeMethod(&connection, "startListening");
+            QMetaObject::invokeMethod(&connection, "startListening", Q_ARG(QString, authCode));
         }
     }
 }

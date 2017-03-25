@@ -21,7 +21,7 @@ class LimitlessConnection : public QObject {
 public:
     LimitlessConnection();
 
-    Q_INVOKABLE void startListening();
+    Q_INVOKABLE void startListening(QString authCode);
     Q_INVOKABLE void stopListening();
 
     std::atomic<bool> _streamingAudioForTranscription;
@@ -35,10 +35,8 @@ private:
     void audioInputReceived(const QByteArray& inputSamples);
 
     std::unique_ptr<QTcpSocket> _transcribeServerSocket;
-    bool _authenticated;
     QByteArray _serverDataBuffer;
     QString _currentTranscription;
-    QQueue<QByteArray> _audioDataBuffer;
 };
 
 #endif //hifi_LimitlessConnection_h

@@ -3,16 +3,15 @@
 #include <src/InterfaceLogging.h>
 #include <src/ui/AvatarInputs.h>
 #include "LimitlessConnection.h"
-#include "LimitlessVoiceRecognitionScriptingInterface.h"
 
 LimitlessConnection::LimitlessConnection() :
-        _streamingAudioForTranscription(false),
-        _authenticated(false)
+        _streamingAudioForTranscription(false)
 {
     qCDebug(interfaceapp) << "A connection was constructed";
 }
 
-void LimitlessConnection::startListening() {
+void LimitlessConnection::startListening(QString authCode) {
+    qCDebug(interfaceapp) << "AuthCode: " << authCode;
     if(_streamingAudioForTranscription)
         return;
     qCDebug(interfaceapp) << "Starting to listen from connection";
@@ -20,16 +19,13 @@ void LimitlessConnection::startListening() {
     _transcribeServerSocket.reset(new QTcpSocket(this));
     connect(_transcribeServerSocket.get(), &QTcpSocket::readyRead, this,
             &LimitlessConnection::transcriptionReceived);
-    connect(DependencyManager::get<AudioClient>().data(), &AudioClient::inputReceived, this,
-            &LimitlessConnection::audioInputReceived);
 
     qCDebug(interfaceapp) << "Setting up connection";
     static const auto host = "gserv_devel.studiolimitless.com";
     _transcribeServerSocket->connectToHost(host, 1407);
     _transcribeServerSocket->waitForConnected();
     QString requestHeader = QString::asprintf("Authorization: %s\r\nfs: %i\r\n",
-                                              DependencyManager::get<LimitlessVoiceRecognitionScriptingInterface>()->authCode.toLocal8Bit().data(),
-                                              AudioConstants::SAMPLE_RATE);
+                                              authCode.toLocal8Bit().data(), AudioConstants::SAMPLE_RATE);
     qCDebug(interfaceapp) << "Sending: " << requestHeader;
     _transcribeServerSocket->write(requestHeader.toLocal8Bit());
     _transcribeServerSocket->waitForBytesWritten();
@@ -38,18 +34,22 @@ void LimitlessConnection::startListening() {
 
 void LimitlessConnection::stopListening() {
     qCDebug(interfaceapp) << "Stop listening from connection";
+    qCDebug(interfaceapp) << "emitting onFinishedSpeaking!";
     emit onFinishedSpeaking(_currentTranscription);
-    _transcribeServerSocket->waitForBytesWritten();
+    _streamingAudioForTranscription = false;
     _transcribeServerSocket->close();
     _currentTranscription = "";
-    _authenticated = false;
+    disconnect(_transcribeServerSocket.get(), &QTcpSocket::readyRead, this,
+            &LimitlessConnection::transcriptionReceived);
     _transcribeServerSocket.reset(nullptr);
+    disconnect(DependencyManager::get<AudioClient>().data(), &AudioClient::inputReceived, this,
+            &LimitlessConnection::audioInputReceived);
+    qCDebug(interfaceapp) << "stopListening finished!";
 }
 
 void LimitlessConnection::audioInputReceived(const QByteArray& inputSamples) {
     if (_transcribeServerSocket && _transcribeServerSocket->isWritable()
         && _transcribeServerSocket->state() != QAbstractSocket::SocketState::UnconnectedState) {
-        _audioDataBuffer.enqueue(inputSamples);
         _transcribeServerSocket->write(inputSamples.data(), inputSamples.size());
         _transcribeServerSocket->waitForBytesWritten();
     }
@@ -73,16 +73,19 @@ void LimitlessConnection::transcriptionReceived() {
             } else if (serverMessage.contains("1408")) {
                 qCDebug(interfaceapp) << "Authenticated!";
                 _serverDataBuffer.clear();
-                _authenticated = true;
+                connect(DependencyManager::get<AudioClient>().data(), &AudioClient::inputReceived, this,
+                        &LimitlessConnection::audioInputReceived);
                 return;
             }
             QJsonObject json = QJsonDocument::fromJson(serverMessage.data()).object();
             _serverDataBuffer.remove(begin, len+1);
             _currentTranscription = json["alternatives"].toArray()[0].toObject()["transcript"].toString();
+            qCDebug(interfaceapp) << "emitting onReceivedTranscription!";
             emit onReceivedTranscription(_currentTranscription);
             if (json["isFinal"] == true) {
-                stopListening();
                 qCDebug(interfaceapp) << "Final transcription: " << _currentTranscription;
+                stopListening();
+                qCDebug(interfaceapp) << "Returning from transcriptionReceived";
                 return;
             }
             begin = _serverDataBuffer.indexOf('<');
