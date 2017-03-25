@@ -21,8 +21,10 @@ class LimitlessConnection : public QObject {
 public:
     LimitlessConnection();
 
-    void startListening();
-    void stopListening();
+    Q_INVOKABLE void startListening();
+    Q_INVOKABLE void stopListening();
+
+    std::atomic<bool> _streamingAudioForTranscription;
 
 signals:
     void onReceivedTranscription(QString speech);
@@ -31,10 +33,8 @@ signals:
 private:
     void transcriptionReceived();
     void audioInputReceived(const QByteArray& inputSamples);
-    void listenLoop();
 
     std::unique_ptr<QTcpSocket> _transcribeServerSocket;
-    std::atomic<bool> _streamingAudioForTranscription;
     bool _authenticated;
     QByteArray _serverDataBuffer;
     QString _currentTranscription;

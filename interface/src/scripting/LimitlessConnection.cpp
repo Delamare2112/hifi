@@ -8,12 +8,14 @@
 LimitlessConnection::LimitlessConnection() :
         _streamingAudioForTranscription(false),
         _authenticated(false)
-{}
+{
+    qCDebug(interfaceapp) << "A connection was constructed";
+}
 
 void LimitlessConnection::startListening() {
     if(_streamingAudioForTranscription)
         return;
-
+    qCDebug(interfaceapp) << "Starting to listen from connection";
     _streamingAudioForTranscription = true;
     _transcribeServerSocket.reset(new QTcpSocket(this));
     connect(_transcribeServerSocket.get(), &QTcpSocket::readyRead, this,
@@ -32,42 +34,32 @@ void LimitlessConnection::startListening() {
     _transcribeServerSocket->write(requestHeader.toLocal8Bit());
     _transcribeServerSocket->waitForBytesWritten();
     _transcribeServerSocket->waitForReadyRead(); // Wait for server to tell us if the auth was successful.
-
-    listenLoop();
-}
-
-void LimitlessConnection::listenLoop() {
-    while(_streamingAudioForTranscription) {
-        QThread::msleep(100); // Helps keep a core not needlessly be at 100% usage
-        while (_authenticated && !_audioDataBuffer.isEmpty()) {
-            const QByteArray samples = _audioDataBuffer.dequeue();
-            qCDebug(interfaceapp) << "Sending Data!";
-            _transcribeServerSocket->write(samples.data(), samples.size());
-            _transcribeServerSocket->waitForBytesWritten();
-        }
-    }
-
-    emit onFinishedSpeaking(_currentTranscription);
-    _currentTranscription = "";
-    _authenticated = false;
-    _transcribeServerSocket->close();
-    _transcribeServerSocket.reset(nullptr);
 }
 
 void LimitlessConnection::stopListening() {
-    _streamingAudioForTranscription = false;
+    qCDebug(interfaceapp) << "Stop listening from connection";
+    emit onFinishedSpeaking(_currentTranscription);
+    _transcribeServerSocket->waitForBytesWritten();
+    _transcribeServerSocket->close();
+    _currentTranscription = "";
+    _authenticated = false;
+    _transcribeServerSocket.reset(nullptr);
 }
 
 void LimitlessConnection::audioInputReceived(const QByteArray& inputSamples) {
     if (_transcribeServerSocket && _transcribeServerSocket->isWritable()
         && _transcribeServerSocket->state() != QAbstractSocket::SocketState::UnconnectedState) {
         _audioDataBuffer.enqueue(inputSamples);
+        _transcribeServerSocket->write(inputSamples.data(), inputSamples.size());
+        _transcribeServerSocket->waitForBytesWritten();
     }
 }
 
 void LimitlessConnection::transcriptionReceived() {
+    qCDebug(interfaceapp) << "transcriptionReceived";
     while (_transcribeServerSocket && _transcribeServerSocket->bytesAvailable() > 0) {
         const QByteArray data = _transcribeServerSocket->readAll();
+        qCDebug(interfaceapp) << "Got: " << data;
         _serverDataBuffer.append(data);
         int begin = _serverDataBuffer.indexOf('<');
         int end = _serverDataBuffer.indexOf('>');

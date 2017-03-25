@@ -39,7 +39,7 @@ private:
     bool _shouldStartListeningForVoice;
 
     QTimer _voiceTimer;
-    QFuture<void> _thread;
+    QThread _connectionThread;
     LimitlessConnection connection;
 
     void voiceTimeout();

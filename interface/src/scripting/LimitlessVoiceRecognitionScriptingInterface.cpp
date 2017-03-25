@@ -14,21 +14,24 @@
 #include <QJsonArray>
 #include <src/ui/AvatarInputs.h>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QMetaObject>
 #include "LimitlessVoiceRecognitionScriptingInterface.h"
 
 LimitlessVoiceRecognitionScriptingInterface::LimitlessVoiceRecognitionScriptingInterface() :
         _shouldStartListeningForVoice(false)
 {
     connect(&_voiceTimer, &QTimer::timeout, this, &LimitlessVoiceRecognitionScriptingInterface::voiceTimeout);
-    connect(&connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onFinishedSpeaking(transcription);});
+    connect(&connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onReceivedTranscription(transcription);});
     connect(&connection, &LimitlessConnection::onFinishedSpeaking, this, [this](QString transcription){emit onFinishedSpeaking(transcription);});
+    connection.moveToThread(&_connectionThread);
+    _connectionThread.start();
 }
 
 void LimitlessVoiceRecognitionScriptingInterface::update() {
     const float audioLevel = AvatarInputs::getInstance()->loudnessToAudioLevel(DependencyManager::get<AudioClient>()->getAudioAverageInputLoudness());
 
     if (_shouldStartListeningForVoice) {
-        if (_thread.isRunning()) {
+        if (connection._streamingAudioForTranscription) {
             if (audioLevel > 0.33f) {
                 if (_voiceTimer.isActive()) {
                     _voiceTimer.stop();
@@ -37,7 +40,8 @@ void LimitlessVoiceRecognitionScriptingInterface::update() {
                 _voiceTimer.start(2000);
             }
         } else if (audioLevel > 0.33f) {
-            _thread = QtConcurrent::run(&connection, &LimitlessConnection::startListening);
+            qCDebug(interfaceapp) << "Starting to listen";
+            QMetaObject::invokeMethod(&connection, "startListening");
         }
     }
 }
@@ -52,8 +56,8 @@ void LimitlessVoiceRecognitionScriptingInterface::setAuthKey(QString key) {
 
 void LimitlessVoiceRecognitionScriptingInterface::voiceTimeout() {
     qCDebug(interfaceapp) << "Timeout timer called";
-    if (_thread.isRunning()) {
-        connection.stopListening();
+    if (connection._streamingAudioForTranscription) {
+        QMetaObject::invokeMethod(&connection, "stopListening");
         qCDebug(interfaceapp) << "Timeout!";
     }
     _voiceTimer.stop();
