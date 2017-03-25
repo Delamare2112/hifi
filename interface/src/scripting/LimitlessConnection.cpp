@@ -12,10 +12,7 @@ LimitlessConnection::LimitlessConnection() :
 
 void LimitlessConnection::startListening(QString authCode) {
     qCDebug(interfaceapp) << "AuthCode: " << authCode;
-    if(_streamingAudioForTranscription)
-        return;
     qCDebug(interfaceapp) << "Starting to listen from connection";
-    _streamingAudioForTranscription = true;
     _transcribeServerSocket.reset(new QTcpSocket(this));
     connect(_transcribeServerSocket.get(), &QTcpSocket::readyRead, this,
             &LimitlessConnection::transcriptionReceived);

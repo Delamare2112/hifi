@@ -17,7 +17,8 @@
 #include "LimitlessVoiceRecognitionScriptingInterface.h"
 
 LimitlessVoiceRecognitionScriptingInterface::LimitlessVoiceRecognitionScriptingInterface() :
-        _shouldStartListeningForVoice(false)
+        _shouldStartListeningForVoice(false),
+        authCode("testKey")
 {
     connect(&_voiceTimer, &QTimer::timeout, this, &LimitlessVoiceRecognitionScriptingInterface::voiceTimeout);
     connect(&connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onReceivedTranscription(transcription);});
@@ -40,6 +41,8 @@ void LimitlessVoiceRecognitionScriptingInterface::update() {
             }
         } else if (audioLevel > 0.33f) {
             qCDebug(interfaceapp) << "Starting to listen";
+            // to make sure invoke doesn't get called twice before the method actually gets called
+            connection._streamingAudioForTranscription = true;
             QMetaObject::invokeMethod(&connection, "startListening", Q_ARG(QString, authCode));
         }
     }
