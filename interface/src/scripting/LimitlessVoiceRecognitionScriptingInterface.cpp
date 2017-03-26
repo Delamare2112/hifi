@@ -17,13 +17,13 @@
 #include "LimitlessVoiceRecognitionScriptingInterface.h"
 
 LimitlessVoiceRecognitionScriptingInterface::LimitlessVoiceRecognitionScriptingInterface() :
-        _shouldStartListeningForVoice(false),
-        authCode("testKey")
+        _shouldStartListeningForVoice(false)
 {
     connect(&_voiceTimer, &QTimer::timeout, this, &LimitlessVoiceRecognitionScriptingInterface::voiceTimeout);
     connect(&connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onReceivedTranscription(transcription);});
     connect(&connection, &LimitlessConnection::onFinishedSpeaking, this, [this](QString transcription){emit onFinishedSpeaking(transcription);});
     connection.moveToThread(&_connectionThread);
+    _connectionThread.setObjectName("Limitless Connection");
     _connectionThread.start();
 }
 

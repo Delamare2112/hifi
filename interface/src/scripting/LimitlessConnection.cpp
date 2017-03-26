@@ -3,6 +3,7 @@
 #include <src/InterfaceLogging.h>
 #include <src/ui/AvatarInputs.h>
 #include "LimitlessConnection.h"
+#include "LimitlessVoiceRecognitionScriptingInterface.h"
 
 LimitlessConnection::LimitlessConnection() :
         _streamingAudioForTranscription(false)
@@ -38,7 +39,7 @@ void LimitlessConnection::stopListening() {
     _currentTranscription = "";
     disconnect(_transcribeServerSocket.get(), &QTcpSocket::readyRead, this,
             &LimitlessConnection::transcriptionReceived);
-    _transcribeServerSocket.reset(nullptr);
+    _transcribeServerSocket.release()->deleteLater();
     disconnect(DependencyManager::get<AudioClient>().data(), &AudioClient::inputReceived, this,
             &LimitlessConnection::audioInputReceived);
     qCDebug(interfaceapp) << "stopListening finished!";
@@ -65,6 +66,8 @@ void LimitlessConnection::transcriptionReceived() {
             const QByteArray serverMessage = _serverDataBuffer.mid(begin+1, len-1);
             if (serverMessage.contains("1407")) {
                 qCDebug(interfaceapp) << "Limitless Speech Server denied.";
+                // Don't spam the server with further false requests please.
+                DependencyManager::get<LimitlessVoiceRecognitionScriptingInterface>()->setListeningToVoice(true);
                 stopListening();
                 return;
             } else if (serverMessage.contains("1408")) {
