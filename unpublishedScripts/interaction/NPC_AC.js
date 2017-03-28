@@ -22,7 +22,7 @@ function getRandomRiddle() {
 	return randIndex.toString();
 }
 
-Script.include("file:///home/delamare/gitclones/hifi/unpublishedScripts/interaction/NPCHelpers_v8.js", function(){print("NPCHelpers included.");main();});
+Script.include("file:///home/delamare/gitclones/hifi/unpublishedScripts/interaction/NPCHelpers_v9.js", function(){print("NPCHelpers included.");main();});
 
 var idleAnim = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/idle.fbx";
 var FST = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/myYisup.fst";

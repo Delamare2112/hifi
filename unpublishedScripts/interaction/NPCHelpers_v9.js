@@ -82,6 +82,9 @@ function playSound(soundURL, onFinished) {
 	callbackOnCondition(function() {
 		return SoundCache.getSound(soundURL).downloaded;
 	}, 250, function() {
+		if(audioInjector) {
+			audioInjector.stop();
+		}
 		audioInjector = Audio.playSound(SoundCache.getSound(soundURL), {position: Avatar.position, volume: 1.0});
 		if(typeof onFinished !== 'undefined') {
 			audioInjector.finished.connect(onFinished);
