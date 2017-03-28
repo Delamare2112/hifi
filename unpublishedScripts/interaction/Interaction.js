@@ -34,6 +34,10 @@
 		callOnNPC("voiceData:" + speech);
 	});
 
+	SpeechRecognition.onReceivedTranscription.connect(function(speech) {
+		callOnNPC("speaking");
+	});
+
 	function setBaselineRotations(rot) {
 		baselineX = rot.x;
 		baselineY = rot.y;
@@ -44,7 +48,6 @@
 		if(intersection.intersects && intersection.distance <= distance){
 			var npcAvatar = AvatarList.getAvatar(intersection.avatarID);
 			if(npcAvatar.displayName.search("NPC") != -1) {
-				print("Found NPC!");
 				setBaselineRotations(Quat.safeEulerAngles(Camera.getOrientation()));
 				return intersection.avatarID;
 			}

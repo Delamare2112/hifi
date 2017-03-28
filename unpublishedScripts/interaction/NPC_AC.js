@@ -9,86 +9,76 @@
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 //
 
-Script.include("https://raw.githubusercontent.com/Delamare2112/hifi/Interaction/unpublishedScripts/interaction/NPCHelpers.js", function(){print("NPCHelpers included.");main();});
+var currentlyUsedIndices = [];
+var currentlyEngaged = false;
+var questionNumber = 0;
+function getRandomRiddle() {
+	var randIndex = null;
+	do {
+		randIndex = Math.floor(Math.random() * 15) + 1;
+	}while(randIndex in currentlyUsedIndices)
 
-var walkForwardAnim = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/walk_fwd.fbx";
+	currentlyUsedIndices.push(randIndex);
+	return randIndex.toString();
+}
+
+Script.include("file:///home/delamare/gitclones/hifi/unpublishedScripts/interaction/NPCHelpers_v8.js", function(){print("NPCHelpers included.");main();});
+
 var idleAnim = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/idle.fbx";
-
-var lightFST = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/beingOfLight.fst";
-var lightThankful = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/beingOfLightThankful.fbx";
-var lightWave = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/beingOfLightWave.fbx";
-var gameOverURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ArcadeGameover.wav";
+var FST = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/myYisup.fst";
 
 Agent.isAvatar = true;
-Avatar.skeletonModelURL = lightFST;
+Avatar.skeletonModelURL = FST;
 Avatar.displayName = "NPC";
-Avatar.position = {x: -1400.1, y: 48, z: -1280.5};
+// Avatar.position = {x: 13444.3555, y: 3.5, z: -427.1562};
+Avatar.orientation = {x: 0.707, y: 0, z: 0, w: 0.707};
+Avatar.position = {x: -1400.1, y: 52, z: -1280.5};
+Avatar.dimensions = {x: 10.0499, y: 10.4895, z: 2.3335};
 
 var startingOrientation = Avatar.orientation;
 Messages.subscribe("interactionComs");
 
-function test() {
-	Messages.messageReceived.connect(function (channel, message, sender) {
-		print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
-		if(channel === "interactionComs" && message.search(Agent.sessionUUID) != -1) {
-			if(message.search("onFocused") != -1) {
-				blocked = false;
-				Avatar.orientation = Quat.lookAtSimple(Avatar.position, AvatarList.getAvatar(sender).position);
-				playAnim(idleAnim, true);
-			}
-			else if (message.search("onLostFocused") != -1) {
-				blocked = false;
-				Avatar.orientation = startingOrientation;
-				playAnim(idleAnim, true);
-			}
-			else if (message.search("onNodReceived") != -1) {
-				npcRespondBlocking(null, lightThankful, function(){print("finished onNodReceived response");playAnim(idleAnim, true);});
-			}
-			else if (message.search("onShakeReceived") != -1) {
-				npcRespondBlocking(null, lightWave, function(){print("finished onShakeReceived response");playAnim(idleAnim, true);});
-			}
-			else if (message.search("voiceData") != -1) {
-				if(message.search("thank") != -1) {
-					npcRespondBlocking(null, lightThankful, function(){print("finished thank response");playAnim(idleAnim, true);});
-				}
-				else if (message.search("bye") != -1) {
-					npcRespondBlocking(gameOverURL, lightWave, function(){print("finished bye response");playAnim(idleAnim, true);});
-				}
-				else if (message.search("test") != -1) {
-					npcRespondBlocking(gameOverURL, null, function(){print("finished test");playAnim(idleAnim, true);});
-				}
-			}
-		}
-	});
-	playAnim(idleAnim, true);
+var gem = Entities.addEntity({position: {x: -1400.1, y: 52, z: -1280.5}, type: "Sphere", color: {red:200,green:200,blue:200}});
+function updateGem() {
+	if(audioInjector) {
+		var colorVal = (audioInjector.loudness + 0.3) * 255;
+		Entities.editEntity(gem, {color: {red:colorVal,green:0,blue:0}});
+	}
 }
 
 function main() {
-	storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/7.json";
+	storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t7.json";
 	Messages.messageReceived.connect(function (channel, message, sender) {
 		print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
-		if(channel === "interactionComs") {
-			if(message.search(Agent.sessionUUID) != -1) {
-				if(message.search("onFocused") != -1) {
-					blocked = false;
-					doActionFromServer("start");
-				}
-				else if (message.search("onNodReceived") != -1) {
-					doActionFromServer("nod");
-				}
-				else if (message.search("onLostFocused") != -1) {
-					blocked = false;
-					Avatar.orientation = startingOrientation;
-					playAnim(idleAnim, true);
-				}
-				else {
-					var voiceDataIndex = message.search("voiceData");
-					if (voiceDataIndex != -1) {
-						doActionFromServer("words", message.substr(voiceDataIndex+10));
+		if(channel === "interactionComs" && strContains(message, Agent.sessionUUID)) {
+			if(strContains(message, "onFocused")) {
+				blocked = false;
+				currentlyEngaged = true;
+				currentlyUsedIndices = [];
+				doActionFromServer("start");
+			}
+			else if (strContains(message, "onLostFocused")) {
+				blocked = false;
+				Avatar.orientation = startingOrientation;
+				npcContinueStory('', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/beingOfLightWave.fbx', 'start');
+			}
+			else if (strContains(message, "speaking")) {
+				// resetIgnoreTimer();
+			}
+			else {
+				var voiceDataIndex = message.search("voiceData");
+				if (voiceDataIndex != -1) {
+					var words = message.substr(voiceDataIndex+10);
+					if(strContains(words, "repeat") || (strContains(words, "say") && strContains(words, "again"))) {
+						doActionFromServer("init");
+					} 
+					else {
+						doActionFromServer("words", words);
 					}
 				}
 			}
 		}
 	});
+	Script.update.connect(updateGem);
 	playAnim(idleAnim, true);
 }

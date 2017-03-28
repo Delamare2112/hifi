@@ -14,6 +14,23 @@ var blocked = false;
 var playingResponseAnim = false;
 var storyURL = "";
 var _qid = "start";
+// var ignoreTimer = false;
+var ignoreCount = 0;
+
+print("TESTTEST");
+
+// function resetIgnoreTimer() {
+// 	if(ignoreTimer) {
+// 		print("clearning timer");
+// 		Script.clearTimeout(ignoreTimer);
+// 	}
+// 	print("Setting timer");
+// 	ignoreTimer = Script.setTimeout(function(){print("sending ignored!");ignoreCount++;doActionFromServer("ignore");}, 20000);
+// }
+
+function strContains(str, sub) {
+	return str.search(sub) != -1;
+}
 
 function callbackOnCondition(conditionFunc, ms, callback, count) {
 	var thisCount = 0;
@@ -80,8 +97,10 @@ function npcRespond(soundURL, animURL, onFinished) {
 			var animDetails = Avatar.getAnimationDetails();
 			print("animDetails.lastFrame: " + animDetails.lastFrame);
 			print("animDetails.currentFrame: " + animDetails.currentFrame);
-			if(animDetails.lastFrame < animDetails.currentFrame + 1 || !playingResponseAnim)
+			if(animDetails.lastFrame < animDetails.currentFrame + 1 || !playingResponseAnim) {
+				// resetIgnoreTimer();
 				onFinished();
+			}
 			audioInjector = false;
 		});
 	}
@@ -93,8 +112,12 @@ function npcRespond(soundURL, animURL, onFinished) {
 			playingResponseAnim = false;
 			print("injector: " + audioInjector);
 			// print("audioInjector.isPlaying(): " + audioInjector.isPlaying());
-			if(!audioInjector || !audioInjector.isPlaying())
+			if(!audioInjector || !audioInjector.isPlaying()) {
+				print("resetting Timer");
+				// resetIgnoreTimer();
+				print("about to call onFinished");
 				onFinished();
+			}
 		});
 	}
 }
@@ -123,10 +146,14 @@ function setQid(newQid) {
 }
 
 function doActionFromServer(action, data, useServerCache) {
-	if(action == "start")
+	// if(ignoreTimer)
+	// 	Script.clearTimeout(ignoreTimer);
+	if(action == "start") {
+		ignoreCount = 0;
 		_qid = "start";
+	}
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "http://gserv_devel.studiolimitless.com/story", true);
+	xhr.open("POST", "http://127.0.0.1:8080/story", true);
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState == 4){
 			if(xhr.status == 200) {
