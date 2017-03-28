@@ -34,6 +34,8 @@ private:
     void transcriptionReceived();
     void audioInputReceived(const QByteArray& inputSamples);
 
+    const bool isConnected() const;
+
     std::unique_ptr<QTcpSocket> _transcribeServerSocket;
     QByteArray _serverDataBuffer;
     QString _currentTranscription;

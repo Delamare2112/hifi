@@ -14,6 +14,7 @@ void LimitlessConnection::startListening(QString authCode) {
     _transcribeServerSocket.reset(new QTcpSocket(this));
     connect(_transcribeServerSocket.get(), &QTcpSocket::readyRead, this,
             &LimitlessConnection::transcriptionReceived);
+    connect(_transcribeServerSocket.get(), &QTcpSocket::disconnected, this, [this](){stopListening();});
 
     static const auto host = "gserv_devel.studiolimitless.com";
     _transcribeServerSocket->connectToHost(host, 1407);
@@ -23,14 +24,15 @@ void LimitlessConnection::startListening(QString authCode) {
     qCDebug(interfaceapp) << "Sending Limitless Audio Stream Request: " << requestHeader;
     _transcribeServerSocket->write(requestHeader.toLocal8Bit());
     _transcribeServerSocket->waitForBytesWritten();
-    _transcribeServerSocket->waitForReadyRead(); // Wait for server to tell us if the auth was successful.
 }
 
 void LimitlessConnection::stopListening() {
     emit onFinishedSpeaking(_currentTranscription);
     _streamingAudioForTranscription = false;
-    _transcribeServerSocket->close();
     _currentTranscription = "";
+    if (!isConnected())
+        return;
+    _transcribeServerSocket->close();
     disconnect(_transcribeServerSocket.get(), &QTcpSocket::readyRead, this,
             &LimitlessConnection::transcriptionReceived);
     _transcribeServerSocket.release()->deleteLater();
@@ -40,8 +42,7 @@ void LimitlessConnection::stopListening() {
 }
 
 void LimitlessConnection::audioInputReceived(const QByteArray& inputSamples) {
-    if (_transcribeServerSocket && _transcribeServerSocket->isWritable()
-        && _transcribeServerSocket->state() != QAbstractSocket::SocketState::UnconnectedState) {
+    if (isConnected()) {
         _transcribeServerSocket->write(inputSamples.data(), inputSamples.size());
         _transcribeServerSocket->waitForBytesWritten();
     }
@@ -82,4 +83,9 @@ void LimitlessConnection::transcriptionReceived() {
             end = _serverDataBuffer.indexOf('>');
         }
     }
+}
+
+const bool LimitlessConnection::isConnected() const {
+    return _transcribeServerSocket.get() && _transcribeServerSocket->isWritable()
+    && _transcribeServerSocket->state() != QAbstractSocket::SocketState::UnconnectedState;
 }
