@@ -29,12 +29,12 @@
 		Messages.sendMessage("interactionComs", NPC + ":" + message);
 	}
 
-	SpeechRecognition.onFinishedSpeaking.connect(function(speech) {
+	LimitlessSpeechRecognition.onFinishedSpeaking.connect(function(speech) {
 		print("Got: " + speech);
 		callOnNPC("voiceData:" + speech);
 	});
 
-	SpeechRecognition.onReceivedTranscription.connect(function(speech) {
+	LimitlessSpeechRecognition.onReceivedTranscription.connect(function(speech) {
 		callOnNPC("speaking");
 	});
 
@@ -69,7 +69,7 @@
 		callOnNPC("onLostFocused");
 		var baselineX = 0;
 		var baselineY = 0;
-		SpeechRecognition.setListeningToVoice(false);
+		LimitlessSpeechRecognition.setListeningToVoice(false);
 	}
 
 	function onWeGainedFocus() {
@@ -78,7 +78,7 @@
 		var rotation = Quat.safeEulerAngles(Camera.getOrientation());
 		baselineX = rotation.x;
 		baselineY = rotation.y;
-		SpeechRecognition.setListeningToVoice(true);
+		LimitlessSpeechRecognition.setListeningToVoice(true);
 	}
 
 	function checkFocus() {
@@ -118,7 +118,7 @@
 
 	this.enterEntity = function(id) {
 		print("Something entered me: " + id);
-		SpeechRecognition.setAuthKey("testKey");
+		LimitlessSpeechRecognition.setAuthKey("testKey");
 		if(!ticker) {
 			ticker = Script.setInterval(tick, 333);
 		}
