@@ -20,9 +20,9 @@ LimitlessVoiceRecognitionScriptingInterface::LimitlessVoiceRecognitionScriptingI
         _shouldStartListeningForVoice(false)
 {
     connect(&_voiceTimer, &QTimer::timeout, this, &LimitlessVoiceRecognitionScriptingInterface::voiceTimeout);
-    connect(&connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onReceivedTranscription(transcription);});
-    connect(&connection, &LimitlessConnection::onFinishedSpeaking, this, [this](QString transcription){emit onFinishedSpeaking(transcription);});
-    connection.moveToThread(&_connectionThread);
+    connect(&_connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onReceivedTranscription(transcription);});
+    connect(&_connection, &LimitlessConnection::onFinishedSpeaking, this, [this](QString transcription){emit onFinishedSpeaking(transcription);});
+    _connection.moveToThread(&_connectionThread);
     _connectionThread.setObjectName("Limitless Connection");
     _connectionThread.start();
 }
@@ -31,7 +31,7 @@ void LimitlessVoiceRecognitionScriptingInterface::update() {
     const float audioLevel = AvatarInputs::getInstance()->loudnessToAudioLevel(DependencyManager::get<AudioClient>()->getAudioAverageInputLoudness());
 
     if (_shouldStartListeningForVoice) {
-        if (connection._streamingAudioForTranscription) {
+        if (_connection._streamingAudioForTranscription) {
             if (audioLevel > 0.33f) {
                 if (_voiceTimer.isActive()) {
                     _voiceTimer.stop();
@@ -42,8 +42,8 @@ void LimitlessVoiceRecognitionScriptingInterface::update() {
         } else if (audioLevel > 0.33f) {
             qCDebug(interfaceapp) << "Starting to listen";
             // to make sure invoke doesn't get called twice before the method actually gets called
-            connection._streamingAudioForTranscription = true;
-            QMetaObject::invokeMethod(&connection, "startListening", Q_ARG(QString, authCode));
+            _connection._streamingAudioForTranscription = true;
+            QMetaObject::invokeMethod(&_connection, "startListening", Q_ARG(QString, authCode));
         }
     }
 }
@@ -58,8 +58,8 @@ void LimitlessVoiceRecognitionScriptingInterface::setAuthKey(QString key) {
 
 void LimitlessVoiceRecognitionScriptingInterface::voiceTimeout() {
     qCDebug(interfaceapp) << "Timeout timer called";
-    if (connection._streamingAudioForTranscription) {
-        QMetaObject::invokeMethod(&connection, "stopListening");
+    if (_connection._streamingAudioForTranscription) {
+        QMetaObject::invokeMethod(&_connection, "stopListening");
         qCDebug(interfaceapp) << "Timeout!";
     }
     _voiceTimer.stop();

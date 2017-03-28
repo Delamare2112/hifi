@@ -40,7 +40,7 @@ private:
 
     QTimer _voiceTimer;
     QThread _connectionThread;
-    LimitlessConnection connection;
+    LimitlessConnection _connection;
 
     void voiceTimeout();
 };
