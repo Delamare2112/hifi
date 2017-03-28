@@ -13,8 +13,7 @@
 		},
 		"Responses":
 		{
-			"positive": ["yes","yup","yeah","yahoo","sure","affirmative","okay","aye","right","exactly","course","naturally","unquestionably","positively","yep","definitely","certainly","fine","absolutely","positive","love","fantastic"],
-			"negative": ["no","not","never","nix","negative","nope","nada","hate"]
+			"positive": ["yes","yup","yeah","yahoo","sure","affirmative","okay","aye","right","exactly","course","naturally","unquestionably","positively","yep","definitely","certainly","fine","absolutely","positive","love","fantastic"]
 		}
 	},
 	"Story":

@@ -47,7 +47,7 @@ function updateGem() {
 }
 
 function main() {
-	storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t7.json";
+	storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t8.json";
 	Messages.messageReceived.connect(function (channel, message, sender) {
 		print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
 		if(channel === "interactionComs" && strContains(message, Agent.sessionUUID)) {
