@@ -19,6 +19,7 @@
 LimitlessVoiceRecognitionScriptingInterface::LimitlessVoiceRecognitionScriptingInterface() :
         _shouldStartListeningForVoice(false)
 {
+    _voiceTimer.setSingleShot(true);
     connect(&_voiceTimer, &QTimer::timeout, this, &LimitlessVoiceRecognitionScriptingInterface::voiceTimeout);
     connect(&_connection, &LimitlessConnection::onReceivedTranscription, this, [this](QString transcription){emit onReceivedTranscription(transcription);});
     connect(&_connection, &LimitlessConnection::onFinishedSpeaking, this, [this](QString transcription){emit onFinishedSpeaking(transcription);});
@@ -36,7 +37,7 @@ void LimitlessVoiceRecognitionScriptingInterface::update() {
                 if (_voiceTimer.isActive()) {
                     _voiceTimer.stop();
                 }
-            } else {
+            } else if (!_voiceTimer.isActive()){
                 _voiceTimer.start(2000);
             }
         } else if (audioLevel > 0.33f) {
@@ -62,5 +63,4 @@ void LimitlessVoiceRecognitionScriptingInterface::voiceTimeout() {
         QMetaObject::invokeMethod(&_connection, "stopListening");
         qCDebug(interfaceapp) << "Timeout!";
     }
-    _voiceTimer.stop();
 }
