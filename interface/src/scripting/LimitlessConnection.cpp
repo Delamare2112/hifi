@@ -8,31 +8,25 @@
 LimitlessConnection::LimitlessConnection() :
         _streamingAudioForTranscription(false)
 {
-    qCDebug(interfaceapp) << "A connection was constructed";
 }
 
 void LimitlessConnection::startListening(QString authCode) {
-    qCDebug(interfaceapp) << "AuthCode: " << authCode;
-    qCDebug(interfaceapp) << "Starting to listen from connection";
     _transcribeServerSocket.reset(new QTcpSocket(this));
     connect(_transcribeServerSocket.get(), &QTcpSocket::readyRead, this,
             &LimitlessConnection::transcriptionReceived);
 
-    qCDebug(interfaceapp) << "Setting up connection";
     static const auto host = "gserv_devel.studiolimitless.com";
     _transcribeServerSocket->connectToHost(host, 1407);
     _transcribeServerSocket->waitForConnected();
     QString requestHeader = QString::asprintf("Authorization: %s\r\nfs: %i\r\n",
                                               authCode.toLocal8Bit().data(), AudioConstants::SAMPLE_RATE);
-    qCDebug(interfaceapp) << "Sending: " << requestHeader;
+    qCDebug(interfaceapp) << "Sending Limitless Audio Stream Request: " << requestHeader;
     _transcribeServerSocket->write(requestHeader.toLocal8Bit());
     _transcribeServerSocket->waitForBytesWritten();
     _transcribeServerSocket->waitForReadyRead(); // Wait for server to tell us if the auth was successful.
 }
 
 void LimitlessConnection::stopListening() {
-    qCDebug(interfaceapp) << "Stop listening from connection";
-    qCDebug(interfaceapp) << "emitting onFinishedSpeaking!";
     emit onFinishedSpeaking(_currentTranscription);
     _streamingAudioForTranscription = false;
     _transcribeServerSocket->close();
@@ -42,7 +36,7 @@ void LimitlessConnection::stopListening() {
     _transcribeServerSocket.release()->deleteLater();
     disconnect(DependencyManager::get<AudioClient>().data(), &AudioClient::inputReceived, this,
             &LimitlessConnection::audioInputReceived);
-    qCDebug(interfaceapp) << "stopListening finished!";
+    qCDebug(interfaceapp) << "Connection to Limitless Voice Server closed.";
 }
 
 void LimitlessConnection::audioInputReceived(const QByteArray& inputSamples) {
@@ -57,7 +51,6 @@ void LimitlessConnection::transcriptionReceived() {
     qCDebug(interfaceapp) << "transcriptionReceived";
     while (_transcribeServerSocket && _transcribeServerSocket->bytesAvailable() > 0) {
         const QByteArray data = _transcribeServerSocket->readAll();
-        qCDebug(interfaceapp) << "Got: " << data;
         _serverDataBuffer.append(data);
         int begin = _serverDataBuffer.indexOf('<');
         int end = _serverDataBuffer.indexOf('>');
@@ -65,13 +58,13 @@ void LimitlessConnection::transcriptionReceived() {
             const int len = end - begin;
             const QByteArray serverMessage = _serverDataBuffer.mid(begin+1, len-1);
             if (serverMessage.contains("1407")) {
-                qCDebug(interfaceapp) << "Limitless Speech Server denied.";
+                qCDebug(interfaceapp) << "Limitless Speech Server denied the request.";
                 // Don't spam the server with further false requests please.
                 DependencyManager::get<LimitlessVoiceRecognitionScriptingInterface>()->setListeningToVoice(true);
                 stopListening();
                 return;
             } else if (serverMessage.contains("1408")) {
-                qCDebug(interfaceapp) << "Authenticated!";
+                qCDebug(interfaceapp) << "Limitless Audio request authenticated!";
                 _serverDataBuffer.clear();
                 connect(DependencyManager::get<AudioClient>().data(), &AudioClient::inputReceived, this,
                         &LimitlessConnection::audioInputReceived);
@@ -80,12 +73,10 @@ void LimitlessConnection::transcriptionReceived() {
             QJsonObject json = QJsonDocument::fromJson(serverMessage.data()).object();
             _serverDataBuffer.remove(begin, len+1);
             _currentTranscription = json["alternatives"].toArray()[0].toObject()["transcript"].toString();
-            qCDebug(interfaceapp) << "emitting onReceivedTranscription!";
             emit onReceivedTranscription(_currentTranscription);
             if (json["isFinal"] == true) {
                 qCDebug(interfaceapp) << "Final transcription: " << _currentTranscription;
                 stopListening();
-                qCDebug(interfaceapp) << "Returning from transcriptionReceived";
                 return;
             }
             begin = _serverDataBuffer.indexOf('<');

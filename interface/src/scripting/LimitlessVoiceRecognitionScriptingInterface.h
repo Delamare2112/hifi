@@ -37,6 +37,8 @@ signals:
 private:
 
     bool _shouldStartListeningForVoice;
+    static const float _audioLevelThreshold;
+    static const int _voiceTimeoutDuration;
 
     QTimer _voiceTimer;
     QThread _connectionThread;
