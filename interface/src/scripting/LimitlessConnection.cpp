@@ -48,7 +48,6 @@ void LimitlessConnection::audioInputReceived(const QByteArray& inputSamples) {
 }
 
 void LimitlessConnection::transcriptionReceived() {
-    qCDebug(interfaceapp) << "transcriptionReceived";
     while (_transcribeServerSocket && _transcribeServerSocket->bytesAvailable() > 0) {
         const QByteArray data = _transcribeServerSocket->readAll();
         _serverDataBuffer.append(data);
