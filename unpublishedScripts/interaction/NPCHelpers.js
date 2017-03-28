@@ -164,7 +164,7 @@ function doActionFromServer(action, data, useServerCache) {
         _qid = "start";
     }
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:8080/story", true);
+    xhr.open("POST", "http://gserv_devel.studiolimitless.com/story", true);
     xhr.onreadystatechange = function(){
         if (xhr.readyState == 4){
             if (xhr.status == 200) {

@@ -22,7 +22,7 @@ function getRandomRiddle() {
     return randIndex.toString();
 }
 
-Script.include("file:///home/delamare/gitclones/hifi/unpublishedScripts/interaction/NPCHelpers_v9.js", function(){
+Script.include("https://github.com/Delamare2112/hifi/blob/Interaction/unpublishedScripts/interaction/NPCHelpers.js", function(){
     print("NPCHelpers included.");main();
 });
 

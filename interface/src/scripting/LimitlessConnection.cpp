@@ -85,7 +85,7 @@ void LimitlessConnection::transcriptionReceived() {
     }
 }
 
-const bool LimitlessConnection::isConnected() const {
+bool LimitlessConnection::isConnected() const {
     return _transcribeServerSocket.get() && _transcribeServerSocket->isWritable()
     && _transcribeServerSocket->state() != QAbstractSocket::SocketState::UnconnectedState;
 }
