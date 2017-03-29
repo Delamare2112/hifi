@@ -39,13 +39,22 @@ Avatar.scale = 2;
 
 Messages.subscribe("interactionComs");
 
-// var gem = Entities.addEntity({position: {x: -1400.1, y: 52, z: -1280.5}, type: "Sphere", color: {red:200,green:200,blue:200}});
-// function updateGem() {
-//     if (audioInjector) {
-//         var colorVal = (audioInjector.loudness + 0.3) * 255;
-//         Entities.editEntity(gem, {color: {red:colorVal,green:0,blue:0}});
-//     }
-// }
+var gem = Entities.addEntity({
+    localPosition: {x:1,y:0,z:0}, 
+    parentJointIndex: Avatar.getJointIndex('HeadTop_End'), 
+    type: "Box", 
+    color: {red:100,green:200,blue:200}, 
+    parentID: Agent.sessionUUID,
+    dimensions: {x: 0.15, y: 0.15, z: 0.15},
+    rotation: Quat.fromPitchYawRollDegrees(-46.8985, 1.6406, 27.0456)
+});
+
+function updateGem() {
+    if (audioInjector) {
+        var colorVal = (audioInjector.loudness + 0.3) * 255;
+        Entities.editEntity(gem, {color: {red:100,green:colorVal,blue:200}});
+    }
+}
 
 function main() {
     storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t12.json";
@@ -60,7 +69,8 @@ function main() {
             } else if (strContains(message, "onLostFocused")) {
                 blocked = false;
                 currentlyEngaged = false;
-                audioInjector.stop();
+                if(audioInjector)
+                    audioInjector.stop();
                 for (var t in timers) {
                     Script.clearTimeout(timers[t]);
                 }
