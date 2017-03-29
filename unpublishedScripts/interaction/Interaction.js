@@ -17,6 +17,7 @@
     var hasCenteredOnNPC = false;
     var distance = 10;
     var r = 8;
+    var player = false;
 
     var baselineX = 0;
     var baselineY = 0;
@@ -120,7 +121,20 @@
         }
     }
 
+    Messages.subscribe("interactionComs");
+
+    Messages.messageReceived.connect(function (channel, message, sender) {
+        if(channel === "interactionComs" && player) {
+            var codeIndex = message.search('clientexec');
+            if(codeIndex != -1) {
+                var code = message.substr(voiceDataIndex+11);
+                Script.evaluate(code);
+            }
+        }
+    }
+
     this.enterEntity = function(id) {
+        player = true;
         print("Something entered me: " + id);
         LimitlessSpeechRecognition.setAuthKey("testKey");
         if (!ticker) {
@@ -128,6 +142,7 @@
         }
     };
     this.leaveEntity = function(id) {
+        player = false;
         print("Something left me: " + id);
         if (ticker) {
             ticker.stop();

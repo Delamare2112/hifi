@@ -14,18 +14,19 @@ var blocked = false;
 var playingResponseAnim = false;
 var storyURL = "";
 var _qid = "start";
-// var ignoreTimer = false;
+var ignoreTimer = false;
 var ignoreCount = 0;
 
 print("TESTTEST");
 
 // function resetIgnoreTimer() {
-// 	if(ignoreTimer) {
-// 		print("clearning timer");
-// 		Script.clearTimeout(ignoreTimer);
-// 	}
-// 	print("Setting timer");
-// 	ignoreTimer = Script.setTimeout(function(){print("sending ignored!");ignoreCount++;doActionFromServer("ignore");}, 20000);
+//     ignoreCount = 0;
+//     if(ignoreTimer) {
+//         print("clearning timer");
+//         Script.clearTimeout(ignoreTimer);
+//     }
+//     print("Setting timer");
+//     ignoreTimer = Script.setTimeout(function(){print("sending ignored!");ignoreCount++;doActionFromServer("ignore");}, 20000);
 // }
 
 function strContains(str, sub) {
@@ -72,7 +73,7 @@ function playAnim(animURL, looping, onFinished) {
         Avatar.startAnimation(animURL, 30, 1, looping, true, 0, AnimationCache.getAnimation(animURL).frames.length);
         if (typeof onFinished !== 'undefined') {
             print("onFinished defined. setting the timeout with timeOfAnim");
-            Script.setTimeout(onFinished, timeOfAnim); 
+            timers.push(Script.setTimeout(onFinished, timeOfAnim));
         }
     });
 }
@@ -156,9 +157,13 @@ function setQid(newQid) {
     doActionFromServer("init");
 }
 
+function runOnClient(code) {
+    Messages.sendMessage("interactionComs", "clientexec:" + code);
+}
+
 function doActionFromServer(action, data, useServerCache) {
     // if(ignoreTimer)
-    // Script.clearTimeout(ignoreTimer);
+    //     Script.clearTimeout(ignoreTimer);
     if (action == "start") {
         ignoreCount = 0;
         _qid = "start";

@@ -20,7 +20,7 @@
 	[
 		{
 			"QID": "start",
-			"init": "questionNumber=0;npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Intro_01.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Intro_01.fbx', function(){npcRespond('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Intro_02.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Intro_02.fbx', function(){npcRespond('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Intro_03.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Intro_03.fbx', function(){npcRespond('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Intro_04.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Intro_04.fbx',function(){setQid(getRandomRiddle());});});});});"
+			"init": "questionNumber=0;npcContinueStory('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/HiFi_Sphinx_Anim_Combined_Entrance_Audio.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx', getRandomRiddle());"
 		},
 		{
 			"QID": "ignored",
@@ -154,14 +154,10 @@
 		},
 		{
 			"QID": "Finished",
-			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/ConclusionRight_02.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/ConclusionRight_02.fbx');",
-			"positive": "setQid('1')",
-			"negative": "Messages.sendMessage('interactionComs', Agent.sessionUUID + ':onLostFocused');setQid('ignoring');",
-			"responses":
-			{
-				"positive": ["play", "again", "repeat", "start", "over"],
-				"negative": ["no", "thank", "thanks", "not", "never"]
-			}
+			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/ConclusionRight_02.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/ConclusionRight_02.fbx', function(){runOnClient('MyAvatar.goToLocation({x: 0, y: 0, z: 0});');Avatar.startAnimation('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx', 0);});",
+			"positive": "",
+			"negative": "",
+			"unknown": ""
 		}
 	]
 }
