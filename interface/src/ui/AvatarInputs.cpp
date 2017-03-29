@@ -43,6 +43,16 @@ AvatarInputs::AvatarInputs(QQuickItem* parent) :  QQuickItem(parent) {
         } \
     }
 
+#define AI_UPDATE_WRITABLE(name, src) \
+    { \
+        auto val = src; \
+        if (_##name != val) { \
+            _##name = val; \
+            qDebug() << "AvatarInputs" << val; \
+            emit name##Changed(val); \
+        } \
+    }
+
 #define AI_UPDATE_FLOAT(name, src, epsilon) \
     { \
         float val = src; \
@@ -53,7 +63,6 @@ AvatarInputs::AvatarInputs(QQuickItem* parent) :  QQuickItem(parent) {
     }
 
 float AvatarInputs::loudnessToAudioLevel(float loudness) {
-
     const float AUDIO_METER_AVERAGING = 0.5;
     const float LOG2 = log(2.0f);
     const float METER_LOUDNESS_SCALE = 2.8f / 5.0f;
@@ -83,7 +92,8 @@ void AvatarInputs::update() {
     AI_UPDATE(cameraEnabled, !Menu::getInstance()->isOptionChecked(MenuOption::NoFaceTracking));
     AI_UPDATE(cameraMuted, Menu::getInstance()->isOptionChecked(MenuOption::MuteFaceTracking));
     AI_UPDATE(isHMD, qApp->isHMDMode());
-    AI_UPDATE(showAudioTools, Menu::getInstance()->isOptionChecked(MenuOption::AudioTools));
+
+    AI_UPDATE_WRITABLE(showAudioTools, Menu::getInstance()->isOptionChecked(MenuOption::AudioTools));
 
     auto audioIO = DependencyManager::get<AudioClient>();
 
@@ -104,6 +114,14 @@ void AvatarInputs::update() {
     //float t = (float)(now - _iconPulseTimeReference) / (float)USECS_PER_SECOND;
     //float pulseFactor = (glm::cos(t * PULSE_FREQUENCY * 2.0f * PI) + 1.0f) / 2.0f;
     //iconColor = PULSE_MIN + (PULSE_MAX - PULSE_MIN) * pulseFactor;
+}
+
+void AvatarInputs::setShowAudioTools(bool showAudioTools) {
+    if (_showAudioTools == showAudioTools)
+        return;
+
+    Menu::getInstance()->setIsOptionChecked(MenuOption::AudioTools, showAudioTools);
+    update();
 }
 
 void AvatarInputs::toggleCameraMute() {

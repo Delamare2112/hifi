@@ -27,15 +27,14 @@ Script.include("https://raw.githubusercontent.com/Delamare2112/hifi/Interaction/
 });
 
 var idleAnim = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/idle.fbx";
-var FST = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/myYisup.fst";
+var FST = "https://s3.amazonaws.com/hifi-public/tony/fixed-sphinx/sphinx.fst";
 
 Agent.isAvatar = true;
 Avatar.skeletonModelURL = FST;
 Avatar.displayName = "NPC";
-// Avatar.position = {x: 13444.3555, y: 3.5, z: -427.1562};
-Avatar.orientation = {x: 0.707, y: 0, z: 0, w: 0.707};
-Avatar.position = {x: -1400.1, y: 52, z: -1280.5};
-Avatar.dimensions = {x: 10.0499, y: 10.4895, z: 2.3335};
+Avatar.position = {x: 13444.3555, y: 3.5, z: -427.1562};
+// Avatar.position = {x: -1400.1, y: 52, z: -1280.5};
+Avatar.scale = 2;
 
 var startingOrientation = Avatar.orientation;
 Messages.subscribe("interactionComs");
