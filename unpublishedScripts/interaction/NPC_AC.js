@@ -33,8 +33,8 @@ var FST = "https://s3.amazonaws.com/hifi-public/tony/fixed-sphinx/sphinx.fst";
 Agent.isAvatar = true;
 Avatar.skeletonModelURL = FST;
 Avatar.displayName = "NPC";
-Avatar.position = {x: 1340.3555, y: 4.078, z: -420.1562};
-Avatar.orientation = {x: 0, y: -0.707, z: 0, w: 0.707};
+Avatar.orientation = {x: 0, y: 1, z: 0, w: 0};
+Avatar.position = {x: 0.3, y: -26.3, z: 8.0};
 Avatar.scale = 2;
 
 Messages.subscribe("interactionComs");
