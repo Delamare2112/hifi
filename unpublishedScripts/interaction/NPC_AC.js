@@ -23,7 +23,7 @@ function getRandomRiddle() {
     return randIndex.toString();
 }
 
-Script.include("https://raw.githubusercontent.com/Delamare2112/hifi/Interaction/unpublishedScripts/interaction/NPC_AC.js", function(){
+Script.include("https://raw.githubusercontent.com/Delamare2112/hifi/Interaction/unpublishedScripts/interaction/NPCHelpers.js", function(){
     print("NPCHelpers included.");main();
 });
 
@@ -48,7 +48,7 @@ Messages.subscribe("interactionComs");
 // }
 
 function main() {
-    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t11.json";
+    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t12.json";
     Messages.messageReceived.connect(function (channel, message, sender) {
         print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
         if (channel === "interactionComs" && strContains(message, Agent.sessionUUID)) {

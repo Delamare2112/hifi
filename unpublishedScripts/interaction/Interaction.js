@@ -127,11 +127,11 @@
         if(channel === "interactionComs" && player) {
             var codeIndex = message.search('clientexec');
             if(codeIndex != -1) {
-                var code = message.substr(voiceDataIndex+11);
-                Script.evaluate(code);
+                var code = message.substr(codeIndex+11);
+                Script.evaluate(code, '');
             }
         }
-    }
+    });
 
     this.enterEntity = function(id) {
         player = true;
