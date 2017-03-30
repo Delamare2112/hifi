@@ -14,6 +14,7 @@
 
     var Avatar = false;
     var NPC = false;
+    var previousNPC = false;
     var hasCenteredOnNPC = false;
     var distance = 10;
     var r = 8;
@@ -88,6 +89,7 @@
 
         if (NPC && newNPC != NPC && !isStillFocusedNPC()) {
             onWeLostFocus();
+            previousNPC = NPC;
             NPC = false;
         }
         if (!NPC && newNPC != false) {
@@ -152,8 +154,8 @@
     this.leaveEntity = function(id) {
         player = false;
         print("Something left me: " + id);
-        if (NPC)
-            callOnNPC("onLostFocused");
+        if (previousNPC)
+            Messages.sendMessage("interactionComs", previousNPC + ":leftArea");
         if (ticker) {
             ticker.stop();
             ticker = false;

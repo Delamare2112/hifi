@@ -13,7 +13,7 @@ var currentlyUsedIndices = [];
 var timers = [];
 var currentlyEngaged = false;
 var questionNumber = 0;
-// var heartbeatTimeout = false;
+var heartbeatTimeout = false;
 function getRandomRiddle() {
     var randIndex = null;
     do {
@@ -36,6 +36,8 @@ Avatar.skeletonModelURL = FST;
 Avatar.displayName = "NPC";
 Avatar.position = {x: 0.3, y: -23.4, z: 8.0};
 Avatar.orientation = {x: 0, y: 1, z: 0, w: 0};
+// Avatar.position = {x: 1340.3555, y: 4.078, z: -420.1562};
+// Avatar.orientation = {x: 0, y: -0.707, z: 0, w: 0.707};
 Avatar.scale = 2;
 
 Messages.subscribe("interactionComs");
@@ -58,6 +60,8 @@ function updateGem() {
 }
 
 function endInteraction() {
+    if(_qid == "Restarting")
+        return;
     print("ending interaction");
     blocked = false;
     currentlyEngaged = false;
@@ -76,23 +80,24 @@ function endInteraction() {
 }
 
 function main() {
-    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t13.json";
+    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t16.json";
     Messages.messageReceived.connect(function (channel, message, sender) {
         print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
         if (channel === "interactionComs" && strContains(message, Agent.sessionUUID)) {
-            // if (strContains(message, 'beat')) {
-            //     if(!heartbeatTimeout)
-            //         Script.clearTimeout(heartbeatTimeout);
-            //     heartbeatTimeout = Script.setTimeout(endInteraction, 1500);
-            // }
-            // else
-            if (strContains(message, "onFocused") && !currentlyEngaged) {
+            if (strContains(message, 'beat')) {
+                if(heartbeatTimeout) {
+                    Script.clearTimeout(heartbeatTimeout);
+                    heartbeatTimeout = false;
+                }
+                heartbeatTimeout = Script.setTimeout(endInteraction, 1500);
+            }
+            else if (strContains(message, "onFocused") && !currentlyEngaged) {
                 blocked = false;
                 currentlyEngaged = true;
                 currentlyUsedIndices = [];
                 doActionFromServer("start");
-            } else if (strContains(message, "onLostFocused")) {
-                endInteraction();
+            } else if (strContains(message, "leftArea")) {
+                // endInteraction();
             } else if (strContains(message, "speaking")) {
                 // resetIgnoreTimer();
             } else {
