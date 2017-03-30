@@ -56,7 +56,7 @@ function playAnim(animURL, looping, onFinished) {
     AnimationCache.getAnimation(animURL);
 
     // Tell the avatar to animate so that we can tell if the animation is ready without crashing
-    Avatar.startAnimation(animURL);
+    Avatar.startAnimation(animURL, 30, 1, false, false, 0, 1);
 
     // Continually check if the animation is ready
     callbackOnCondition(function(){

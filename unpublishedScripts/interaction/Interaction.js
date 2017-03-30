@@ -25,6 +25,7 @@
     var shakeRange = 20;
 
     var ticker = false;
+    var heartbeatTimer = false;
 
     function callOnNPC(message) {
         Messages.sendMessage("interactionComs", NPC + ":" + message);
@@ -121,6 +122,10 @@
         }
     }
 
+    function heartbeat() {
+        callOnNPC("beat");
+    }
+
     Messages.subscribe("interactionComs");
 
     Messages.messageReceived.connect(function (channel, message, sender) {
@@ -140,13 +145,22 @@
         if (!ticker) {
             ticker = Script.setInterval(tick, 333);
         }
+        if(!heartbeatTimer) {
+            heartbeatTimer = Script.setInterval(heartbeat, 1000);
+        }
     };
     this.leaveEntity = function(id) {
         player = false;
         print("Something left me: " + id);
+        if (NPC)
+            callOnNPC("onLostFocused");
         if (ticker) {
             ticker.stop();
             ticker = false;
+        }
+        if (heartbeatTimer) {
+            heartbeatTimer.stop();
+            heartbeatTimer = false;
         }
     };
     this.unload = function() {

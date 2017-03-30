@@ -13,6 +13,7 @@ var currentlyUsedIndices = [];
 var timers = [];
 var currentlyEngaged = false;
 var questionNumber = 0;
+// var heartbeatTimeout = false;
 function getRandomRiddle() {
     var randIndex = null;
     do {
@@ -33,8 +34,8 @@ var FST = "https://s3.amazonaws.com/hifi-public/tony/fixed-sphinx/sphinx.fst";
 Agent.isAvatar = true;
 Avatar.skeletonModelURL = FST;
 Avatar.displayName = "NPC";
+Avatar.position = {x: 0.3, y: -23.4, z: 8.0};
 Avatar.orientation = {x: 0, y: 1, z: 0, w: 0};
-Avatar.position = {x: 0.3, y: -26.3, z: 8.0};
 Avatar.scale = 2;
 
 Messages.subscribe("interactionComs");
@@ -56,25 +57,42 @@ function updateGem() {
     }
 }
 
+function endInteraction() {
+    print("ending interaction");
+    blocked = false;
+    currentlyEngaged = false;
+    if(audioInjector)
+        audioInjector.stop();
+    for (var t in timers) {
+        Script.clearTimeout(timers[t]);
+    }
+    npcRespondBlocking(
+        'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/EarlyExit_0' + (Math.floor(Math.random() * 2) + 1).toString() + '.wav',
+        'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/reversedSphinx.fbx', 
+        function(){
+            Avatar.startAnimation('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx', 0);
+        }
+    );
+}
+
 function main() {
-    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t12.json";
+    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t13.json";
     Messages.messageReceived.connect(function (channel, message, sender) {
         print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
         if (channel === "interactionComs" && strContains(message, Agent.sessionUUID)) {
+            // if (strContains(message, 'beat')) {
+            //     if(!heartbeatTimeout)
+            //         Script.clearTimeout(heartbeatTimeout);
+            //     heartbeatTimeout = Script.setTimeout(endInteraction, 1500);
+            // }
+            // else
             if (strContains(message, "onFocused") && !currentlyEngaged) {
                 blocked = false;
                 currentlyEngaged = true;
                 currentlyUsedIndices = [];
                 doActionFromServer("start");
             } else if (strContains(message, "onLostFocused")) {
-                blocked = false;
-                currentlyEngaged = false;
-                if(audioInjector)
-                    audioInjector.stop();
-                for (var t in timers) {
-                    Script.clearTimeout(timers[t]);
-                }
-                Avatar.startAnimation("https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx", 0);
+                endInteraction();
             } else if (strContains(message, "speaking")) {
                 // resetIgnoreTimer();
             } else {
