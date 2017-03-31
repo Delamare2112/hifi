@@ -42,15 +42,18 @@ Avatar.scale = 2;
 
 Messages.subscribe("interactionComs");
 
-var gem = Entities.addEntity({
-    localPosition: {x:1,y:0,z:0}, 
-    parentJointIndex: Avatar.getJointIndex('HeadTop_End'), 
-    type: "Box", 
-    color: {red:100,green:200,blue:200}, 
-    parentID: Agent.sessionUUID,
-    dimensions: {x: 0.15, y: 0.15, z: 0.15},
-    rotation: Quat.fromPitchYawRollDegrees(-46.8985, 1.6406, 27.0456)
-});
+var gem = false;
+Script.setTimeout(function(){
+    gem = Entities.addEntity({
+        localPosition: {x:1,y:0,z:0}, 
+        parentJointIndex: 81, 
+        type: "Box", 
+        color: {red:100,green:200,blue:200}, 
+        parentID: Agent.sessionUUID,
+        dimensions: {x: 0.15, y: 0.15, z: 0.15},
+        rotation: Quat.fromPitchYawRollDegrees(-46.8985, 1.6406, 27.0456)
+    });
+}, 5000);
 
 function updateGem() {
     if (audioInjector) {
@@ -80,9 +83,10 @@ function endInteraction() {
 }
 
 function main() {
-    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t16.json";
+    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t19.json";
     Messages.messageReceived.connect(function (channel, message, sender) {
-        print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
+        if(!strContains(message, 'beat'))
+            print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
         if (channel === "interactionComs" && strContains(message, Agent.sessionUUID)) {
             if (strContains(message, 'beat')) {
                 if(heartbeatTimeout) {
@@ -97,9 +101,9 @@ function main() {
                 currentlyUsedIndices = [];
                 doActionFromServer("start");
             } else if (strContains(message, "leftArea")) {
-                // endInteraction();
+
             } else if (strContains(message, "speaking")) {
-                // resetIgnoreTimer();
+
             } else {
                 var voiceDataIndex = message.search("voiceData");
                 if (voiceDataIndex != -1) {

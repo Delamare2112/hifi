@@ -75,7 +75,6 @@
         callOnNPC("onLostFocused");
         var baselineX = 0;
         var baselineY = 0;
-        LimitlessSpeechRecognition.setListeningToVoice(false);
     }
 
     function onWeGainedFocus() {
@@ -155,6 +154,7 @@
         }
     };
     this.leaveEntity = function(id) {
+        LimitlessSpeechRecognition.setListeningToVoice(false);
         player = false;
         print("Something left me: " + id);
         if (previousNPC)

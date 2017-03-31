@@ -14,20 +14,8 @@ var blocked = false;
 var playingResponseAnim = false;
 var storyURL = "";
 var _qid = "start";
-var ignoreTimer = false;
-var ignoreCount = 0;
 
 print("TESTTEST");
-
-// function resetIgnoreTimer() {
-//     ignoreCount = 0;
-//     if(ignoreTimer) {
-//         print("clearning timer");
-//         Script.clearTimeout(ignoreTimer);
-//     }
-//     print("Setting timer");
-//     ignoreTimer = Script.setTimeout(function(){print("sending ignored!");ignoreCount++;doActionFromServer("ignore");}, 20000);
-// }
 
 function strContains(str, sub) {
     return str.search(sub) != -1;
@@ -101,7 +89,6 @@ function npcRespond(soundURL, animURL, onFinished) {
             print("animDetails.lastFrame: " + animDetails.lastFrame);
             print("animDetails.currentFrame: " + animDetails.currentFrame);
             if (animDetails.lastFrame < animDetails.currentFrame + 1 || !playingResponseAnim) {
-                // resetIgnoreTimer();
                 onFinished();
             }
             audioInjector = false;
@@ -114,10 +101,8 @@ function npcRespond(soundURL, animURL, onFinished) {
             print("anim finished");
             playingResponseAnim = false;
             print("injector: " + audioInjector);
-            // print("audioInjector.isPlaying(): " + audioInjector.isPlaying());
             if (!audioInjector || !audioInjector.isPlaying()) {
                 print("resetting Timer");
-                // resetIgnoreTimer();
                 print("about to call onFinished");
                 onFinished();
             }
@@ -162,8 +147,6 @@ function runOnClient(code) {
 }
 
 function doActionFromServer(action, data, useServerCache) {
-    // if(ignoreTimer)
-    //     Script.clearTimeout(ignoreTimer);
     if (action == "start") {
         ignoreCount = 0;
         _qid = "start";

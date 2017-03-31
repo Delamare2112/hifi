@@ -4,10 +4,6 @@
 	{
 		"Actions":
 		{
-			"ignore": "doActionFromServer('ignored'+(ignoreCount.toString()));",
-			"ignore1": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/NoAnswerA_02.wav', '');",
-			"ignore2": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/NoAnswerB_02.wav', '');",
-			"ignore2": "npcContinueStory('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/EarlyExit_03.wav', '', 'ignored');",
 			"positive": "var x=function(){if(questionNumber>=2){setQid('Finished');return;}var suffix=['A', 'B'][questionNumber++] + '_0' + (Math.floor(Math.random() * 2) + 2).toString() + '.wav';npcContinueStory('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/RightAnswer'+suffix, 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/RightAnswerB_02.fbx', getRandomRiddle());};x();",
 			"unknown": "var suffix=(Math.floor(Math.random() * 3) + 1).toString();npcContinueStory('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/WrongAnswer_0' + suffix + '.wav','https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/WrongAnswer_0' + suffix + '.fbx', getRandomRiddle());",
 			"hint": "var suffix=(Math.floor(Math.random() * 2) + 1).toString();npcContinueStory('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Hint_0' + suffix + '.wav','https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hint_0' + suffix + '.fbx')"
@@ -26,21 +22,11 @@
 			"init": "questionNumber=0;npcContinueStory('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/HiFi_Sphinx_Anim_Combined_Entrance_Audio.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx', getRandomRiddle());"
 		},
 		{
-			"QID": "ignored",
-			"init": "currentlyEngaged = false",
-			"positive": "setQid(getRandomRiddle());",
-			"ignore": "",
-			"responses":
-			{
-				"positive": ["never", "mind", "start", "sorry", "promise", "listen", "start", "forgive", "again", "continue"]
-			}
-		},
-		{
 			"QID": "1",
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Blackboard.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Blackboard.fbx');",
 			"responses":
 			{
-				"positive": ["blackboard", "chalkboard", "chalk board"]
+				"positive": ["blackboard", "chalkboard", "chalk board", "slate"]
 			}
 		},
 		{
@@ -48,7 +34,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Breath.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Breath.fbx');",
 			"responses":
 			{
-				"positive": ["breath"]
+				"positive": ["breath", "death"]
 			}
 		},
 		{
@@ -56,7 +42,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Clock.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Clock.fbx');",
 			"responses":
 			{
-				"positive": ["clock", "talk"]
+				"positive": ["clock", "cock"]
 			}
 		},
 		{
@@ -64,7 +50,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Coffin.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Coffin.fbx');",
 			"responses":
 			{
-				"positive": ["coffin"]
+				"positive": ["coffin", "casket"]
 			}
 		},
 		{
@@ -72,7 +58,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Coin.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Coin.fbx');",
 			"responses":
 			{
-				"positive": ["coin", "boing"]
+				"positive": ["coin", "boing", "coinage", "coin piece", "change", "join"]
 			}
 		},
 		{
@@ -80,7 +66,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Corn.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Corn.fbx');",
 			"responses":
 			{
-				"positive": ["corn", "born"]
+				"positive": ["corn", "born", "maize", "maze", "means", "torn", "horn", "worn", "porn"]
 			}
 		},
 		{
@@ -88,7 +74,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Darkness.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Darkness.fbx');",
 			"responses":
 			{
-				"positive": ["darkness"]
+				"positive": ["darkness", "dark", "blackness"]
 			}
 		},
 		{
@@ -104,7 +90,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Gold.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Gold.fbx');",
 			"responses":
 			{
-				"positive": ["gold", "old", "bold"]
+				"positive": ["gold", "old", "bold", "cold", "told"]
 			}
 		},
 		{
@@ -112,7 +98,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_River.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_River.fbx');",
 			"responses":
 			{
-				"positive": ["river", "bigger"]
+				"positive": ["river", "bigger", "stream", "creek", "brook"]
 			}
 		},
 		{
@@ -136,7 +122,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Silence.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Silence.fbx');",
 			"responses":
 			{
-				"positive": ["silence", "lance"]
+				"positive": ["silence", "lance", "quiet"]
 			}
 		},
 		{
@@ -144,7 +130,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Stairs.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Stairs.fbx');",
 			"responses":
 			{
-				"positive": ["stairs"]
+				"positive": ["stairs", "steps", "stair", "stairwell"]
 			}
 		},
 		{
