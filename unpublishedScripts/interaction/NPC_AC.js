@@ -60,8 +60,6 @@ function updateGem() {
 }
 
 function endInteraction() {
-    if(_qid == "Restarting")
-        return;
     print("ending interaction");
     blocked = false;
     currentlyEngaged = false;
@@ -70,13 +68,15 @@ function endInteraction() {
     for (var t in timers) {
         Script.clearTimeout(timers[t]);
     }
-    npcRespondBlocking(
-        'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/EarlyExit_0' + (Math.floor(Math.random() * 2) + 1).toString() + '.wav',
-        'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/reversedSphinx.fbx', 
-        function(){
-            Avatar.startAnimation('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx', 0);
-        }
-    );
+    if(_qid != "Restarting") {
+        npcRespondBlocking(
+            'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/EarlyExit_0' + (Math.floor(Math.random() * 2) + 1).toString() + '.wav',
+            'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/reversedSphinx.fbx', 
+            function(){
+                Avatar.startAnimation('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx', 0);
+            }
+        );
+    }
 }
 
 function main() {

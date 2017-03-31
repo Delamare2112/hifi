@@ -29,7 +29,10 @@
     var heartbeatTimer = false;
 
     function callOnNPC(message) {
-        Messages.sendMessage("interactionComs", NPC + ":" + message);
+        if(NPC)
+            Messages.sendMessage("interactionComs", NPC + ":" + message);
+        else
+            Messages.sendMessage("interactionComs", previousNPC + ":" + message);
     }
 
     LimitlessSpeechRecognition.onFinishedSpeaking.connect(function(speech) {
