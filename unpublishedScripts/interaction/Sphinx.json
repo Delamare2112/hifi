@@ -50,7 +50,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Coffin.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Coffin.fbx');",
 			"responses":
 			{
-				"positive": ["coffin", "casket"]
+				"positive": ["coffin", "casket", "possum"]
 			}
 		},
 		{
@@ -82,7 +82,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Gloves.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Gloves.fbx');",
 			"responses":
 			{
-				"positive": ["gloves"]
+				"positive": ["gloves", "love"]
 			}
 		},
 		{
@@ -130,7 +130,7 @@
 			"init": "npcRespondBlocking('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/ScratchDialogue/Riddle_Stairs.wav', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Riddle_Stairs.fbx');",
 			"responses":
 			{
-				"positive": ["stairs", "steps", "stair", "stairwell"]
+				"positive": ["stairs", "steps", "stair", "stairwell", "there's", "stairway"]
 			}
 		},
 		{
@@ -150,7 +150,7 @@
 		},
 		{
 			"QID": "Restarting",
-			"init": "npcRespondBlocking('', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/reversedSphinx.fbx', function(){Avatar.startAnimation('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx', 0);});",
+			"init": "npcRespondBlocking('', 'https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/reversedSphinx.fbx', function(){Avatar.startAnimation('https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Animation/Hifi_Sphinx_Anim_Entrance_Kneel_Combined_with_Intro.fbx', 0);_qid='';});",
 			"positive": "",
 			"negative": "",
 			"unknown": ""

@@ -42,26 +42,6 @@ Avatar.scale = 2;
 
 Messages.subscribe("interactionComs");
 
-var gem = false;
-Script.setTimeout(function(){
-    gem = Entities.addEntity({
-        localPosition: {x:1,y:0,z:0}, 
-        parentJointIndex: 81, 
-        type: "Box", 
-        color: {red:100,green:200,blue:200}, 
-        parentID: Agent.sessionUUID,
-        dimensions: {x: 0.15, y: 0.15, z: 0.15},
-        rotation: Quat.fromPitchYawRollDegrees(-46.8985, 1.6406, 27.0456)
-    });
-}, 5000);
-
-function updateGem() {
-    if (audioInjector) {
-        var colorVal = (audioInjector.loudness + 0.3) * 255;
-        Entities.editEntity(gem, {color: {red:100,green:colorVal,blue:200}});
-    }
-}
-
 function endInteraction() {
     print("ending interaction");
     blocked = false;
@@ -83,7 +63,7 @@ function endInteraction() {
 }
 
 function main() {
-    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx_t19.json";
+    storyURL = "https://storage.googleapis.com/limitlessserv-144100.appspot.com/hifi%20assets/Sphinx.json";
     Messages.messageReceived.connect(function (channel, message, sender) {
         if(!strContains(message, 'beat'))
             print(sender + " -> NPC @" + Agent.sessionUUID + ": " + message);
